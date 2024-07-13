@@ -1,6 +1,6 @@
-# Arduino R4 WiFi Http Client Wrapper
+# Arduino R4 WiFi HttpClient Wrapper
 
-An Arduino UNO R4 WiFi http client wrapper with functionality of only GET & POST tailored for our thesis at MSU-IIT.
+An Arduino UNO R4 WiFi HttpClient wrapper with functionality of only GET & POST tailored for our thesis at MSU-IIT.
 
 ## License
 
