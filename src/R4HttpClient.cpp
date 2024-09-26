@@ -152,6 +152,7 @@ int R4HttpClient::readResponse()
   this->headers.clear(); // clear headers after request
 
   // read body
+  this->body = "";
   while (this->client.available())
   {
     String chunkSizeStr = this->client.readStringUntil('\n');
