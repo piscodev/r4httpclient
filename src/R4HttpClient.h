@@ -1,35 +1,33 @@
-#ifndef R4HTTP_CLIENT_H
-#define R4HTTP_CLIENT_H
+#ifndef RFExpress_CLIENT_H
+#define RFExpress_CLIENT_H
 
 #include <WiFiS3.h>
 
-class R4HttpClient
+class RFExpressClient
 {
   private:
-    WiFiSSLClient client;
+    int port;
     String host;
     String endpoint;
-    int port;
-    std::vector<String> headers;
     String body;
+    WiFiSSLClient client;
+    std::vector<String> headers;
 
-    static const int initialBufferSize = 512;
-    char *buffer;
-    int bufferSize;
-    int bufferIndex;
+    void extractUrlComponents(const String &url);
+    int sendRequest(const String &method, const String &requestBody);
+    int readResponse();
 
-    void resizeBuffer(int newSize); // Method to resize the buffer
-
-    // Disable copy constructor and assignment operator // reducing cost
-    R4HttpClient(const R4HttpClient&) = delete;
-    R4HttpClient& operator=(const R4HttpClient&) = delete;
+    // disable copy constructor and assignment operator
+    RFExpressClient(const RFExpressClient&) = delete;
+    RFExpressClient& operator=(const RFExpressClient&) = delete;
 
   public:
-    R4HttpClient();
-    ~R4HttpClient();
+    RFExpressClient();
+    ~RFExpressClient();
 
-    void begin(const WiFiSSLClient &sslClient, const String &url, const int& nport);
-    void setHeader(const String &content);
+    void begin(const WiFiSSLClient &sslClient, const String &url);
+    void begin(const WiFiSSLClient &sslClient, const String &url, const int &nport);
+    void addHeader(const String &content);
     void setTimeout(const int &ms);
     int POST(const String &requestBody);
     int GET();
@@ -37,4 +35,4 @@ class R4HttpClient
     void close();
 };
 
-#endif  //R4HTTP_CLIENT_H
+#endif  //RFExpress_CLIENT_H
