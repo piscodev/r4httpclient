@@ -1,0 +1,43 @@
+#######################################
+# Syntax Coloring Map For R4HttpClient
+
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+String	KEYWORD1
+int		KEYWORD1
+void	KEYWORD1
+bool	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+POST	KEYWORD2
+GET	KEYWORD2
+addHeader	KEYWORD2
+setTimeout	KEYWORD2
+getBody	KEYWORD2
+close	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+client	KEYWORD2
+headers	KEYWORD2
+host	KEYWORD2
+body	KEYWORD2
+endpoint	KEYWORD2
+port	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+HTTP/1.1	LITERAL1
+Host	LITERAL1

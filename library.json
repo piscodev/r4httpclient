@@ -1,0 +1,45 @@
+{
+    "name": "R4HttpClient",
+    "keywords": "internet, r4httpclient, r4http, httpclient, http client, uno r4, communication, uno r4 wifi",
+    "description": "A wrapper for Arduino UNO R4 WiFi microcontroller WiFiS3 HttpClient with functionality of GET & POST.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/piscodev/r4httpclient"
+    },
+    "authors": [
+        {
+            "name": "Princetoniño Piscos",
+            "email": "princepiscos@gmail.com",
+            "maintainer": true
+        }
+    ],
+    "version": "1.0.0",
+    "frameworks": "arduino",
+    "platforms": [
+        "ATmega328P",
+        "Arm® Cortex®-M4"
+    ],
+    "dependencies": [
+        {
+            "name": "WiFiS3",
+            "version": "^0.0.0",
+            "platforms": [
+                "arduino",
+                "ATmega328P",
+                "Arm® Cortex®-M4"
+            ]
+        },
+        {
+            "name": "WiFi101",
+            "version": "^2.4.0",
+            "platforms": [
+                "arduino"
+            ]
+        }
+    ],
+    "examples": [
+        "examples/*/*.ino",
+        "examples/*/*.ino"
+    ],
+    "license": "GPL-3.0"
+}
