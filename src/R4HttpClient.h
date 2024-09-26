@@ -1,9 +1,9 @@
-#ifndef RFExpress_CLIENT_H
-#define RFExpress_CLIENT_H
+#ifndef R4HttpClient_CLIENT_H
+#define R4HttpClient_CLIENT_H
 
 #include <WiFiS3.h>
 
-class RFExpressClient
+class R4HttpClient
 {
   private:
     int port;
@@ -14,16 +14,17 @@ class RFExpressClient
     std::vector<String> headers;
 
     void extractUrlComponents(const String &url);
+    void setPort(const int &nport);
     int sendRequest(const String &method, const String &requestBody);
     int readResponse();
 
     // disable copy constructor and assignment operator
-    RFExpressClient(const RFExpressClient&) = delete;
-    RFExpressClient& operator=(const RFExpressClient&) = delete;
+    R4HttpClient(const R4HttpClient&) = delete;
+    R4HttpClient& operator=(const R4HttpClient&) = delete;
 
   public:
-    RFExpressClient();
-    ~RFExpressClient();
+    R4HttpClient();
+    ~R4HttpClient();
 
     void begin(const WiFiSSLClient &sslClient, const String &url);
     void begin(const WiFiSSLClient &sslClient, const String &url, const int &nport);
@@ -35,4 +36,4 @@ class RFExpressClient
     void close();
 };
 
-#endif  //RFExpress_CLIENT_H
+#endif  //R4HttpClient_CLIENT_H

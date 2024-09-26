@@ -1,8 +1,8 @@
-#include "RFExpressClient.h"
+#include "R4HttpClient.h"
 
-RFExpressClient::RFExpressClient() : port(0), body("") {}
+R4HttpClient::R4HttpClient() : port(0), body("") {}
 
-RFExpressClient::~RFExpressClient()
+R4HttpClient::~R4HttpClient()
 {
   this->client.flush();
   this->client.stop();
@@ -15,9 +15,10 @@ RFExpressClient::~RFExpressClient()
  * @params: sslClient, url
  * @Description: Initializes client, url. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
  */
-void RFExpressClient::begin(const WiFiSSLClient &sslClient, const String &url)
+void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url)
 {
   this->client = sslClient;
+  this->setPort((url.startsWith("https://")) ? 443 : 80);
   this->extractUrlComponents(url);
 }
 
@@ -25,18 +26,18 @@ void RFExpressClient::begin(const WiFiSSLClient &sslClient, const String &url)
  * @params: sslClient, url, nport
  * @Description: Initializes client, url, port. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
  */
-void RFExpressClient::begin(const WiFiSSLClient &sslClient, const String &url, const int &nport)
+void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url, const int &nport)
 {
   this->client = sslClient;
-  this->port = nport;
+  this->setPort(nport);
   this->extractUrlComponents(url);
 }
 
 /*
  * @params: url
- * @Description: Initializes url. Then, extracts the url to get the host, its designated port, and then the endpoint in which where it will do the request method
+ * @Description: Parses the URL to extract the host and endpoint
  */
-void RFExpressClient::extractUrlComponents(const String &url)
+void R4HttpClient::extractUrlComponents(const String &url)
 {
   int index = url.indexOf("://");
   if (index < 0)
@@ -49,15 +50,18 @@ void RFExpressClient::extractUrlComponents(const String &url)
   int endpointIndex = url.indexOf("/", index);
   this->host = url.substring(index, (endpointIndex == -1 ? url.length() : endpointIndex));
   this->endpoint = (endpointIndex == -1) ? "/" : url.substring(endpointIndex);
+}
 
-  this->port = (url.startsWith("https://")) ? 443 : 80;
+void R4HttpClient::setPort(const int &nport)
+{
+  this->port = nport;
 }
 
 /*
  * @params: content
  * @Description: Initializes the Content Headers to make the request method
  */
-void RFExpressClient::addHeader(const String &content)
+void R4HttpClient::addHeader(const String &content)
 {
   this->headers.push_back(content);
 }
@@ -66,12 +70,12 @@ void RFExpressClient::addHeader(const String &content)
  * @params: ms
  * @Description: set timeout when request does not respond within specific time.
  */
-void RFExpressClient::setTimeout(const int &ms)
+void R4HttpClient::setTimeout(const int &ms)
 {
   this->client.setTimeout(ms);
 }
 
-int RFExpressClient::sendRequest(const String &method, const String &requestBody)
+int R4HttpClient::sendRequest(const String &method, const String &requestBody)
 {
   if (!this->client.connect(host.c_str(), port))
   {
@@ -109,7 +113,7 @@ int RFExpressClient::sendRequest(const String &method, const String &requestBody
  * @params: requestBody
  * @Description: called by reference base on parameter and centralized the method to send post request
  */
-int RFExpressClient::POST(const String &requestBody)
+int R4HttpClient::POST(const String &requestBody)
 {
   return sendRequest("POST", requestBody);
 }
@@ -117,7 +121,7 @@ int RFExpressClient::POST(const String &requestBody)
 /*
  * @Description: centralized the method to send get request, empty request indicates the method only needs a reponse
  */
-int RFExpressClient::GET()
+int R4HttpClient::GET()
 {
   return sendRequest("GET", "");
 }
@@ -130,7 +134,7 @@ int RFExpressClient::GET()
                  Read Body: Check if data available from the client then read each chunk lines, then iterate to print for response body
                  while decrementing chunkSize for precise chunk response client read body
  */
-int RFExpressClient::readResponse()
+int R4HttpClient::readResponse()
 {
   int statusCode = -1;
   //this->body.reserve(512); // Pre-allocate memory for body
@@ -169,7 +173,7 @@ int RFExpressClient::readResponse()
 /*
  * @Description: Initialized through client.read() to get the response body after request
  */
-String RFExpressClient::getBody() const
+String R4HttpClient::getBody() const
 {
   return this->body;
 }
@@ -177,7 +181,7 @@ String RFExpressClient::getBody() const
 /*
  * @Description: Close connection to prevent resource leaks
  */
-void RFExpressClient::close()
+void R4HttpClient::close()
 {
   this->client.stop();
 }
