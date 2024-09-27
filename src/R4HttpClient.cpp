@@ -4,7 +4,7 @@ R4HttpClient::R4HttpClient() : port(0), body(""), isDebug(false) {}
 
 R4HttpClient::~R4HttpClient()
 {
-  //DEBUG(F("RFExpressClient objects destroyed~"));
+  //DEBUG(F("R4HttpClient objects destroyed~"));
   this->client.flush();
   this->client.stop();
   this->headers.clear();
@@ -64,7 +64,7 @@ void R4HttpClient::setPort(const int &nport)
  * @Description: Sets debug to see raw requests from the request
  * @params: debug
  */
-void RFExpressClient::setDebug(const bool &debug)
+void R4HttpClient::setDebug(const bool &debug)
 {
   this->isDebug = debug;
 }
@@ -98,7 +98,7 @@ void R4HttpClient::setTimeout(const int &ms)
  * @param requestBody: The body of the HTTP request, typically used for POST or PUT requests.
  * @return int Returns the HTTP status code from the server, or a custom error code if the connection or request fails.
  */
-int RFExpressClient::sendRequest(const String &method, const String &requestBody)
+int R4HttpClient::sendRequest(const String &method, const String &requestBody)
 {
   if (!this->client.connect(this->host.c_str(), this->port))
   {
