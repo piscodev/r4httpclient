@@ -47,9 +47,9 @@ If you want to utilize this Library. Include the header file in your Arduino Ske
 > > - Note that `WiFiSSLClient client;` should always be declared globally.
 > > - `R4HttpClient http;` can be declared globally or locally.
 
-> To use the debug mode, put right after the .begin() function
+> To use the debug mode, put right after the http.begin() function
 > ```cpp
-> rfxpress.setDebug(true);
+> http.setDebug(true);
 
 __Example 1: Arduino UNO R4 WiFi POST Request with ArduinoJson__
 ```cpp
