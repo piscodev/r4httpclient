@@ -13,12 +13,13 @@
             "maintainer": true
         }
     ],
-    "version": "1.0.0",
+    "version": "1.0.2",
     "frameworks": "arduino",
     "platforms": [
-        "renesas_uno",
+        "Arduino UNO R4 Boards",
         "ATmega328P",
-        "Arm Cortex-M4"
+        "Arm Cortex-M4",
+        "arduino:renesas"
     ],
     "examples": [
         "examples/GET_request/*.ino",
