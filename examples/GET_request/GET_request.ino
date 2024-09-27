@@ -10,26 +10,27 @@ const char* _PASS = SECRET_PASS;
 void setup()
 {
   Serial.begin(115200);
+  while (!Serial);
 
   String fv = WiFi.firmwareVersion();
   if (fv < WIFI_FIRMWARE_LATEST_VERSION)
-    Serial.println("Please upgrade the firmware");
+    Serial.println(F("Please upgrade the firmware"));
 
   if (WiFi.status() == WL_NO_MODULE)
   {
-    Serial.println("Communication with WiFi module failed!");
+    Serial.println(F("Communication with WiFi module failed!"));
     while (true);
   }
 
   WiFi.begin(_SSID, _PASS);
-  Serial.print("Connecting to WiFi");
+  Serial.print(F("Connecting to WiFi"));
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(1000);
-    Serial.print(".");
+    Serial.print(F("."));
   }
   Serial.println();
-  Serial.println("Successfully connected to WiFi!");
+  Serial.println(F("Successfully connected to WiFi!"));
 
   http.begin(client, "https://icanhazdadjoke.com/slack", 443);
   http.setTimeout(3000);
@@ -37,7 +38,7 @@ void setup()
   http.setHeader("Connection: close");
 
   int responseNum = http.GET();
-  if (responseNum > 0)
+  if (responseNum > 0) // OR if (responseNum == HTTP_CODE_OK) // 200 OK
   {
     // Get body
     String responseBody = http.getBody();
