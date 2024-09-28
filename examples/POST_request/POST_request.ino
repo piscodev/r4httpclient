@@ -14,7 +14,6 @@ void setup()
 {
   Serial.begin(115200);
   while (!Serial);
-  DEBUG("Debugging is enabled!"); // only displayed if R4HTTPCLIENT_DEBUG_MODE is defined
 
   String fv = WiFi.firmwareVersion();
   if (fv < WIFI_FIRMWARE_LATEST_VERSION)
@@ -44,8 +43,8 @@ void setup()
 
   http.begin(client, "https://example.org", 443);
   http.setTimeout(3000);
-  http.setHeader("User-Agent: Arduino UNO R4 WiFi");
-  http.setHeader("Content-Type: application/json");
+  http.addHeader("User-Agent: Arduino UNO R4 WiFi");
+  http.addHeader("Content-Type: application/json");
 
   int responseNum = http.POST(requestBody);
   if (responseNum > 0) // OR if (responseNum == HTTP_CODE_OK) // 200 OK

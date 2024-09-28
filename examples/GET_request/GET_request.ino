@@ -34,8 +34,8 @@ void setup()
 
   http.begin(client, "https://icanhazdadjoke.com/slack", 443);
   http.setTimeout(3000);
-  http.setHeader("User-Agent: Arduino UNO R4 WiFi");
-  http.setHeader("Connection: close");
+  http.addHeader("User-Agent: Arduino UNO R4 WiFi");
+  http.addHeader("Connection: close");
 
   int responseNum = http.GET();
   if (responseNum > 0) // OR if (responseNum == HTTP_CODE_OK) // 200 OK
