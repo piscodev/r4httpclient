@@ -51,7 +51,7 @@ If you want to utilize this Library. Include the header file in your Arduino Ske
 > ```cpp
 > http.setDebug(true);
 
-__Example 1: Arduino UNO R4 WiFi POST Request with ArduinoJson__
+__Example 1: Arduino UNO R4 WiFi GET Request__
 ```cpp
 #include "R4WiFi_secrets.h"
 #include <R4HttpClient.h>
@@ -111,7 +111,7 @@ void loop()
 }
 ```
 
-__Example 2: Arduino UNO R4 WiFi GET Request__
+__Example 2: Arduino UNO R4 WiFi POST Request with ArduinoJson__
 ```cpp
 #include "R4WiFi_secrets.h"
 #include <R4HttpClient.h>
