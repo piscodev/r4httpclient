@@ -178,7 +178,7 @@ void loop()
 ```
 
 ## License
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0). The license ensures that the software remains free and open-source, granting users the freedom to use, modify, and distribute the software. Any modifications or derivative works must also be licensed under the same terms, ensuring that the same freedoms are preserved in all copies and versions.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0). This license ensures that the software remains free and open-source, granting users the freedom to use, modify, and distribute the software. Any modifications or derivative works must also be licensed under the same terms, ensuring that the same freedoms are preserved in all copies and versions.
 
 For more details, see the GNU General Public License v3.0.
 [GNU Public License](https://www.gnu.org/licenses/gpl-3.0.html)
