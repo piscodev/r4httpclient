@@ -22,13 +22,13 @@ If you want to utilize this Library. Include the header file in your Arduino Ske
 
 # R4HttpClient - Functions:
 
-`void begin(client, url)`: Initializes the SSL client and extracts the host and endpoint from the provided URL for subsequent requests.
+`void begin(client, String url)`: Initializes the SSL client and extracts the host and endpoint from the provided URL for subsequent requests.
 
-`void begin(client, url, port)`: Same as above, but also initializes a custom port for the client connection.
+`void begin(client, String url, uint16_t port)`: Same as above, but also initializes a custom port for the client connection.
 
-`void addHeader(content)`: Adds custom headers to be sent with the HTTP request.
+`void addHeader(String content)`: Adds custom headers to be sent with the HTTP request.
 
-`void setTimeout(ms)`: Sets a timeout for the client to terminate a request if it takes longer than the specified time in milliseconds.
+`void setTimeout(int ms)`: Sets a timeout for the client to terminate a request if it takes longer than the specified time in milliseconds.
 
 `void setDebug(bool)`: Enables or disables debug mode, which displays raw HTTP messages.
 

@@ -75,7 +75,7 @@ void R4HttpClient::setDebug(const bool &debug)
  */
 void R4HttpClient::addHeader(const String &content)
 {
-  this->headers.push_back(content);
+  this->headers.emplace_back(content);
 }
 
 /*
