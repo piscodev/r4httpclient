@@ -109,7 +109,7 @@ enum ResponseState
 class R4HttpClient
 {
   private:
-    int port;
+    uint16_t port;
     String host;
     String endpoint;
     String body;
@@ -118,7 +118,7 @@ class R4HttpClient
     std::vector<String> headers;
 
     void extractUrlComponents(const String &url);
-    void setPort(const int &nport);
+    void setPort(const uint16_t &nport);
     int sendRequest(const String &method, const String &requestBody);
 
     // disable copy constructor and assignment operator
@@ -130,7 +130,7 @@ class R4HttpClient
     ~R4HttpClient();
 
     void begin(const WiFiSSLClient &sslClient, const String &url);
-    void begin(const WiFiSSLClient &sslClient, const String &url, const int &nport);
+    void begin(const WiFiSSLClient &sslClient, const String &url, const uint16_t &nport);
     void addHeader(const String &content);
     void setTimeout(const int &ms);
     void setDebug(const bool &debug);

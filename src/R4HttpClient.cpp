@@ -28,7 +28,7 @@ void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url)
  * @params: sslClient, url, nport
  * @Description: Initializes client, url, port. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
  */
-void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url, const int &nport)
+void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url, const uint16_t &nport)
 {
   this->client = sslClient;
   this->setPort(nport);
@@ -55,7 +55,7 @@ void R4HttpClient::extractUrlComponents(const String &url)
   this->endpoint = (endpointIndex == -1) ? "/" : url.substring(endpointIndex);
 }
 
-void R4HttpClient::setPort(const int &nport)
+void R4HttpClient::setPort(const uint16_t &nport)
 {
   this->port = nport;
 }
