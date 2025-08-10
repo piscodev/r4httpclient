@@ -31,9 +31,10 @@ void setup()
   }
   Serial.println();
   Serial.println(F("Successfully connected to WiFi!"));
+  delay(1000); // give some time for the connection to stabilize
 
   http.begin(client, "https://icanhazdadjoke.com/slack", 443);
-  http.setTimeout(3000);
+  http.setTimeout(5000);
   http.addHeader("User-Agent: Arduino UNO R4 WiFi");
   http.addHeader("Connection: close");
 

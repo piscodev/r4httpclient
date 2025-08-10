@@ -86,6 +86,7 @@ void setup()
   }
   Serial.println();
   Serial.println(F("Successfully connected to WiFi!"));
+  delay(1000); // give some time for the connection to stabilize
 
   http.begin(client, "https://icanhazdadjoke.com/slack", 443);
   http.setTimeout(3000);
@@ -147,6 +148,7 @@ void setup()
   }
   Serial.println();
   Serial.println(F("Successfully connected to WiFi!"));
+  delay(1000); // give some time for the connection to stabilize
 
   StaticJsonDocument<512> doc;
   doc["example"] = "content";

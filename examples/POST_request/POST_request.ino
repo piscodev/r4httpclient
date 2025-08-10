@@ -1,5 +1,3 @@
-// #define R4HTTPCLIENT_DEBUG_MODE // uncomment this line to enable debugging mode
-
 #include "R4WiFi_secrets.h"
 #include <R4HttpClient.h>
 #include <ArduinoJson.h>
@@ -34,6 +32,7 @@ void setup()
   }
   Serial.println();
   Serial.println("Successfully connected to WiFi!");
+  delay(1000); // give some time for the connection to stabilize
 
   StaticJsonDocument<512> doc;
   doc["example"] = "content";
@@ -42,7 +41,7 @@ void setup()
   serializeJson(doc, requestBody);
 
   http.begin(client, "https://example.org", 443);
-  http.setTimeout(3000);
+  http.setTimeout(5000);
   http.addHeader("User-Agent: Arduino UNO R4 WiFi");
   http.addHeader("Content-Type: application/json");
 

@@ -114,7 +114,7 @@ class R4HttpClient
     String endpoint;
     String body;
     bool isDebug;
-    WiFiSSLClient client;
+    WiFiSSLClient *client;
     std::vector<String> headers;
 
     void extractUrlComponents(const String &url);
@@ -129,8 +129,11 @@ class R4HttpClient
     R4HttpClient();
     ~R4HttpClient();
 
+    void begin(const WiFiSSLClient *sslClient, const String &url);
+    void begin(const WiFiSSLClient *sslClient, const String &url, const uint16_t &nport);
     void begin(const WiFiSSLClient &sslClient, const String &url);
     void begin(const WiFiSSLClient &sslClient, const String &url, const uint16_t &nport);
+
     void addHeader(const String &content);
     void setTimeout(const int &ms);
     void setDebug(const bool &debug);
