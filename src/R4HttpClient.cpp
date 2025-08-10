@@ -1,12 +1,15 @@
 #include "R4HttpClient.h"
 
-R4HttpClient::R4HttpClient() : port(0), body(""), isDebug(false) {}
+R4HttpClient::R4HttpClient() : port(0), body(""), isDebug(false), client(nullptr) {}
 
 R4HttpClient::~R4HttpClient()
 {
   //DEBUG(F("R4HttpClient objects destroyed~"));
-  this->client.flush();
-  this->client.stop();
+  if (client)
+  {
+    this->client->flush();
+    this->client->stop();
+  }
   this->headers.clear();
   this->port = 0;
   this->body = "";
@@ -17,7 +20,7 @@ R4HttpClient::~R4HttpClient()
  * @params: sslClient, url
  * @Description: Initializes client, url. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
  */
-void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url)
+void R4HttpClient::begin(WiFiSSLClient *sslClient, const String &url)
 {
   this->client = sslClient;
   this->setPort((url.startsWith("https://")) ? 443 : 80);
@@ -28,9 +31,31 @@ void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url)
  * @params: sslClient, url, nport
  * @Description: Initializes client, url, port. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
  */
-void R4HttpClient::begin(const WiFiSSLClient &sslClient, const String &url, const uint16_t &nport)
+void R4HttpClient::begin(WiFiSSLClient *sslClient, const String &url, const uint16_t &nport)
 {
   this->client = sslClient;
+  this->setPort(nport);
+  this->extractUrlComponents(url);
+}
+
+/*
+ * @params: sslClient, url
+ * @Description: Initializes client, url. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
+ */
+void R4HttpClient::begin(WiFiSSLClient &sslClient, const String &url)
+{
+  this->client = &sslClient;
+  this->setPort((url.startsWith("https://")) ? 443 : 80);
+  this->extractUrlComponents(url);
+}
+
+/*
+ * @params: sslClient, url, nport
+ * @Description: Initializes client, url, port. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
+ */
+void R4HttpClient::begin(WiFiSSLClient &sslClient, const String &url, const uint16_t &nport)
+{
+  this->client = &sslClient;
   this->setPort(nport);
   this->extractUrlComponents(url);
 }
@@ -84,7 +109,7 @@ void R4HttpClient::addHeader(const String &content)
  */
 void R4HttpClient::setTimeout(const int &ms)
 {
-  this->client.setTimeout(ms);
+  this->client->setTimeout(ms);
 }
 
 /*
@@ -100,108 +125,115 @@ void R4HttpClient::setTimeout(const int &ms)
  */
 int R4HttpClient::sendRequest(const String &method, const String &requestBody)
 {
-  if (!this->client.connect(this->host.c_str(), this->port))
-  {
-    //DEBUG(F("Connection refused"));
-    return R4HTTP_ERROR_CONNECTION_REFUSED;
-  }
+  // any previous connection is closed
+  if (this->client->connected())
+    this->client->stop();
 
-  if (!this->client.connected())
+  unsigned long startAttemptTime = millis();
+  while (!this->client->connect(this->host.c_str(), this->port)) // retry connect until timeout
   {
-    //DEBUG(F("Client was not able to connect to the server"));
-    return R4HTTP_ERROR_NOT_CONNECTED;
+    if (millis() - startAttemptTime > this->client->getTimeout())
+      return R4HTTP_ERROR_CONNECTION_REFUSED;
+
+    delay(10); // short backoff
   }
 
   // manual prints
-  this->client.print(method);
-  this->client.print(" ");
-  this->client.print(endpoint);
-  this->client.print(" HTTP/1.1\r\n");
-  this->client.print("Host: ");
-  this->client.print(host);
-  this->client.print("\r\n");
+  this->client->print(method);
+  this->client->print(" ");
+  this->client->print(endpoint);
+  this->client->print(" HTTP/1.1\r\n");
+  this->client->print("Host: ");
+  this->client->print(host);
+  this->client->print("\r\n");
   for (const String &header : headers)
   {
-    this->client.print(header);
-    this->client.print("\r\n");
+    this->client->print(header);
+    this->client->print("\r\n");
   }
 
   if (!requestBody.isEmpty())
   {
-    this->client.print("Content-Length: ");
-    this->client.print(requestBody.length());
-    this->client.print("\r\n\r\n");
-    this->client.print(requestBody);
-  } else this->client.print("\r\n");
+    this->client->print("Content-Length: ");
+    this->client->print(requestBody.length());
+    this->client->print("\r\n\r\n");
+    this->client->print(requestBody);
+  } else this->client->print("\r\n");
 
   // start reading response
   int statusCode = -1;
+  bool isChunked = false;
+  int contentLength = -1;
   this->body = "";
 
   ResponseState state = READ_HEADERS;
-  while (this->client.connected() && state != END_RESPONSE)
+  while (this->client->connected() && state != END_RESPONSE)
   {
     if (state == READ_HEADERS)
     {
-      String line = this->client.readStringUntil('\n');
+      String line = this->client->readStringUntil('\n');
       if (isDebug && (line.length() > 0))
         Serial.println(line);
 
       if (line.startsWith("HTTP/1.1 ")) // Parse status code
         statusCode = line.substring(9, 12).toInt();
 
+      if (line.startsWith("Transfer-Encoding: chunked"))
+        isChunked = true;
+
+      if (line.startsWith("Content-Length: "))
+        contentLength = line.substring(16).toInt();
+
       if (line == "\r") // end of headers
       {
         state = READ_BODY;
         this->headers.clear();
       }
-    }
-
-    if (state == READ_BODY)
+    } else if (state == READ_BODY)
     {
-      if (this->client.available())
+      if (isChunked)
       {
-        String chunkSizeStr = this->client.readStringUntil('\n');
-        if (isDebug && (chunkSizeStr.length() > 0))
-          Serial.println(chunkSizeStr);
-
-        int chunkSize = strtol(chunkSizeStr.c_str(), NULL, 16); // convert chunk size from hex
-        if (method == "GET")
+        while (true)
         {
-          if (chunkSize == 0) // end of chunks
-          {
-            state = END_RESPONSE;
-            this->body = chunkSizeStr;
-            break;
-          }
-        }
+          String chunkSizeStr = this->client->readStringUntil('\n');
+          int chunkSize = strtol(chunkSizeStr.c_str(), NULL, 16);
+          if (chunkSize <= 0)
+            break; // end of chunks
 
-        if (method == "POST")
-        {
-          if (chunkSize == 0) // end of chunks
-          {
-            state = END_RESPONSE;
-            break;
-          }
-
-          // read chunk data into body
           while (chunkSize--)
           {
-            if (this->client.available())
+            if (this->client->available())
             {
-              char c = this->client.read();
-              this->body += c; // append to body
-            } else {
-
-              statusCode = R4HTTP_ERROR_CONNECTION_LOST;
-              if (isDebug)
-                Serial.println(F("Connection lost while reading the response body"));
-
-              break;
+              char c = this->client->read();
+              this->body += c;
             }
           }
+          this->client->read(); // \r
+          this->client->read(); // \n
+        }
+      } else if (contentLength > 0)
+      {
+        int bytesRead = 0;
+        while (bytesRead < contentLength)
+        {
+          if (this->client->available())
+          {
+            char c = this->client->read();
+            this->body += c;
+            bytesRead++;
+          }
+        }
+      } else {
+
+        // no content length, read until closed
+        while (this->client->available())
+        {
+          char c = this->client->read();
+          this->body += c;
         }
       }
+
+      state = END_RESPONSE;
     }
   }
 
@@ -226,7 +258,7 @@ int R4HttpClient::GET()
 }
 
 /*
- * @Description: Initialized through client.read() to get the response body after request
+ * @Description: Initialized through client read() to get the response body after request
  */
 String R4HttpClient::getBody() const
 {
@@ -238,11 +270,6 @@ String R4HttpClient::getBody() const
  */
 void R4HttpClient::close()
 {
-  if (!this->client.connected())
-  {
-    //DEBUG(F("Client not connected, nothing to close"));
-    return;
-  }
-
-  this->client.stop();
+  if (client)
+    this->client->stop();
 }
