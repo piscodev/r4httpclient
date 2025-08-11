@@ -129,10 +129,8 @@ class R4HttpClient
     R4HttpClient();
     ~R4HttpClient();
 
-    void begin(const WiFiSSLClient *sslClient, const String &url);
-    void begin(const WiFiSSLClient *sslClient, const String &url, const uint16_t &nport);
-    void begin(const WiFiSSLClient &sslClient, const String &url);
-    void begin(const WiFiSSLClient &sslClient, const String &url, const uint16_t &nport);
+    void begin(WiFiSSLClient &sslClient, const String &url);
+    void begin(WiFiSSLClient &sslClient, const String &url, const uint16_t &nport);
 
     void addHeader(const String &content);
     void setTimeout(const int &ms);

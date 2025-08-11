@@ -20,28 +20,6 @@ R4HttpClient::~R4HttpClient()
  * @params: sslClient, url
  * @Description: Initializes client, url. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
  */
-void R4HttpClient::begin(WiFiSSLClient *sslClient, const String &url)
-{
-  this->client = sslClient;
-  this->setPort((url.startsWith("https://")) ? 443 : 80);
-  this->extractUrlComponents(url);
-}
-
-/*
- * @params: sslClient, url, nport
- * @Description: Initializes client, url, port. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
- */
-void R4HttpClient::begin(WiFiSSLClient *sslClient, const String &url, const uint16_t &nport)
-{
-  this->client = sslClient;
-  this->setPort(nport);
-  this->extractUrlComponents(url);
-}
-
-/*
- * @params: sslClient, url
- * @Description: Initializes client, url. Then, extracts the url to get the host, then the endpoint in which where it will do the post request
- */
 void R4HttpClient::begin(WiFiSSLClient &sslClient, const String &url)
 {
   this->client = &sslClient;
